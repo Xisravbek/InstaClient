@@ -1,17 +1,31 @@
 import { Input, Form, Button } from 'antd';
-import React from 'react';
+import React, { useState } from 'react';
 import "./Register.scss";
 import { register } from '../../services/authService';
+import { useDispatch, useSelector } from 'react-redux';
+import { setUser } from '../../redux/reduxStore/authSlice';
+import { failureLoading, startLoading, successLoading } from '../../redux/reduxStore/loaderSlice';
 
 const Register = () => {
   const [form] = Form.useForm();
+  const [regError , setRegError ] = useState("");
+  const {user} = useSelector(state => state.authSlice);
+  const {isLoading} = useSelector(state => state.loaderSlice);
+  const dispatch = useDispatch();
+
 
   const sendData = async (values) => {
+    dispatch(startLoading())
     try {
       const data = await register(values);
       console.log(data);
+      localStorage.setItem("token" , JSON.stringify(data.token));
+      dispatch(setUser(data.user));
+      dispatch(successLoading())
     } catch (error) {
       console.log(error);
+      setRegError(error?.response?.data?.message);
+      dispatch(failureLoading())
     }
   }
 
@@ -31,19 +45,19 @@ const Register = () => {
 
         <Form form={form} onFinish={sendData}>
           <Form.Item name='userName'>
-            <Input placeholder='Username' />
+            <Input placeholder='Username' required />
           </Form.Item>
           <Form.Item name='firstName'>
-            <Input placeholder='First Name' />
+            <Input placeholder='First Name' required />
           </Form.Item>
           <Form.Item name='lastName'>
-            <Input placeholder='Last Name' />
+            <Input placeholder='Last Name' required />
           </Form.Item>
           <Form.Item name='email'>
-            <Input placeholder='Email' />
+            <Input type='email' placeholder='Email' required />
           </Form.Item>
           <Form.Item name='password'>
-            <Input.Password placeholder='Password' />
+            <Input.Password placeholder='Password' required />
           </Form.Item>
           <Form.Item
             name='confirmPassword'
@@ -56,14 +70,15 @@ const Register = () => {
               confirmPasswordValidator,
             ]}
           >
-            <Input.Password placeholder='Confirm Password' />
+            <Input.Password placeholder='Confirm Password' required />
           </Form.Item>
 
           <Form.Item>
-            <Button htmlType='submit' className='next-btn'>
+            <Button loading={isLoading} htmlType='submit' className='next-btn'>
               Next
             </Button>
           </Form.Item>
+          <span className='register-error'>{regError}</span>
         </Form>
       </div>
     </div>
