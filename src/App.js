@@ -1,6 +1,8 @@
 import { useEffect } from 'react';
 import './App.css';
 import { useSelector } from 'react-redux';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import Register from './pages/Register/Register';
 
 function App() {
   const {user} = useSelector(state => state.authSlice)
@@ -11,9 +13,14 @@ function App() {
 
 
   return (
-    <div className="App">
-      
-    </div>
+    
+      <div className="App">
+        <Routes>
+          <Route path='/register' element={<Register />} />
+        </Routes>
+        
+      </div>
+
   );
 }
 
