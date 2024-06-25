@@ -8,7 +8,7 @@ function App() {
   const {user} = useSelector(state => state.authSlice)
 
   useEffect(() => {
-    
+    console.log(user);
   } ,[]);
 
 

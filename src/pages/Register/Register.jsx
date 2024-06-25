@@ -1,5 +1,5 @@
 import { Input , Form, Button } from 'antd'
-import React from 'react';
+import React, { useState } from 'react';
 import "./Register.scss"
 import { register } from '../../services/authService';
 
@@ -10,9 +10,11 @@ const Register = () => {
 
   const sendData  = async (e) => {
     try {
-      const data = await register(e)
-      console.log(data);
+      const data = await register(e);
+
+      
     } catch (error) {
+      setRegError(error.response?.data?.message)
       console.log(error);
     }
   }
